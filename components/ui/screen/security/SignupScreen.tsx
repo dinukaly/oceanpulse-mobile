@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Card from '@/components/ui/Card';
 import ActionButton from '@/components/ui/ActionButton';
 import StatusBanner from '@/components/ui/StatusBanner';
 import AuthField from '@/components/ui/screen/security/AuthField';
 import AuthLayout from '@/components/ui/screen/security/AuthLayout';
+import AppText from '@/components/ui/AppText';
 import { theme } from '@/constants/theme';
 import api from '@/utils/api';
 import { validateBoatId, validateConfirmPassword, validateEmail, validateFields, validateName, validatePassword, validatePhone } from '@/utils/validation';
@@ -21,6 +23,7 @@ export default function SignupScreen({ navigation }: any) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [boatId, setBoatId] = useState('');
+  const busy = useRef(false);
   const [loading, setLoading] = useState(false);
   const [requestError, setRequestError] = useState('');
   const [errors, setErrors] = useState(emptyErrors);
@@ -40,7 +43,8 @@ export default function SignupScreen({ navigation }: any) {
   };
 
   const handleRegister = async () => {
-    if (loading || !validateInputs()) return;
+    if (busy.current || !validateInputs()) return;
+    busy.current = true;
     setRequestError('');
     try {
       setLoading(true);
@@ -54,42 +58,44 @@ export default function SignupScreen({ navigation }: any) {
     } catch (error: any) {
       setRequestError(error.response?.data?.message || 'Account creation failed. Please try again.');
     } finally {
+      busy.current = false;
       setLoading(false);
     }
   };
 
   return (
-    <AuthLayout eyebrow="Join OceanPulse" title="Create your account" description="Set up your account to access routes, conditions, and messages.">
-      <Text style={styles.sectionTitle}>Your details</Text>
-      <Text style={styles.sectionDescription}>We’ll email a verification code after you create your account.</Text>
+    <AuthLayout grouped eyebrow="Join OceanPulse" title="Create your account" description="Set up your account to access routes, conditions, and messages.">
+
+<StatusBanner tone="info" title="Email verification" message="We’ll send a six-digit code after registration." />
       {!!requestError && <StatusBanner tone="error" title="Could not create account" message={requestError} style={styles.banner} />}
-      <View style={styles.fields}>
-        <AuthField label="First name" value={firstName} onChangeText={(value) => { setFirstName(value); clearError('firstName'); }} error={errors.firstName} placeholder="First name" autoComplete="given-name" textContentType="givenName" />
-        <AuthField label="Last name" value={lastName} onChangeText={(value) => { setLastName(value); clearError('lastName'); }} error={errors.lastName} placeholder="Last name" autoComplete="family-name" textContentType="familyName" />
-        <AuthField label="Email address" value={email} onChangeText={(value) => { setEmail(value); clearError('email'); }} error={errors.email} placeholder="you@example.com" keyboardType="email-address" autoCapitalize="none" autoComplete="email" textContentType="emailAddress" />
-        <AuthField label="Boat ID" optional value={boatId} onChangeText={(value) => { setBoatId(value.toUpperCase()); clearError('boatId'); }} error={errors.boatId} placeholder="B001" autoCapitalize="characters" accessibilityHint="Optional. Format: one letter followed by three numbers." />
-        <AuthField label="Contact number" value={contact} onChangeText={(value) => { setContact(value); clearError('contact'); }} error={errors.contact} placeholder="+94771234567" keyboardType="phone-pad" autoComplete="tel" textContentType="telephoneNumber" />
-        <View style={styles.divider} />
-        <Text style={styles.subheading}>Secure your account</Text>
-        <Text style={styles.passwordHint}>Use at least 8 characters with a letter and a number.</Text>
-        <AuthField label="Password" value={password} onChangeText={(value) => { setPassword(value); clearError('password'); }} error={errors.password} placeholder="Create a password" secureTextEntry autoComplete="new-password" textContentType="newPassword" />
-        <AuthField label="Confirm password" value={confirmPassword} onChangeText={(value) => { setConfirmPassword(value); clearError('confirmPassword'); }} error={errors.confirmPassword} placeholder="Enter password again" secureTextEntry autoComplete="new-password" textContentType="newPassword" />
-      </View>
+      <View style={{ gap: 24 }}><Card><AppText variant="section" style={{ marginBottom: 16 }}>Personal details</AppText>
+        <AuthField editable={!loading} label="First name" value={firstName} onChangeText={(value) => { setFirstName(value); clearError('firstName'); }} error={errors.firstName} placeholder="First name" autoComplete="given-name" textContentType="givenName" />
+        <AuthField editable={!loading} label="Last name" value={lastName} onChangeText={(value) => { setLastName(value); clearError('lastName'); }} error={errors.lastName} placeholder="Last name" autoComplete="family-name" textContentType="familyName" />
+        <AuthField editable={!loading} label="Email address" value={email} onChangeText={(value) => { setEmail(value); clearError('email'); }} error={errors.email} placeholder="nimal.perera@example.com" keyboardType="email-address" autoCapitalize="none" autoComplete="email" textContentType="emailAddress" />
+        <AuthField editable={!loading} label="Contact number" value={contact} onChangeText={(value) => { setContact(value); clearError('contact'); }} error={errors.contact} placeholder="+94771234567" keyboardType="phone-pad" autoComplete="tel" textContentType="telephoneNumber" />
+</Card><Card><AppText variant="section" style={{ marginBottom: 16 }}>Vessel information</AppText>
+        <AuthField editable={!loading} label="Boat ID" optional value={boatId} onChangeText={(value) => { setBoatId(value.toUpperCase()); clearError('boatId'); }} error={errors.boatId} placeholder="B247" hint="One letter followed by three numbers, for example B247." autoCapitalize="characters" accessibilityHint="Optional. Format: one letter followed by three numbers." />
+</Card><Card>
+        <AppText variant="label" style={styles.subheading}>Security & credentials</AppText>
+        <AppText style={styles.passwordHint}>At least 8 characters, with letters and numbers</AppText>
+        <AuthField editable={!loading} label="Password" value={password} onChangeText={(value) => { setPassword(value); clearError('password'); }} error={errors.password} placeholder="Create a password" secureTextEntry autoComplete="new-password" textContentType="newPassword" />
+        <AuthField editable={!loading} label="Confirm password" value={confirmPassword} onChangeText={(value) => { setConfirmPassword(value); clearError('confirmPassword'); }} error={errors.confirmPassword} placeholder="Enter password again" secureTextEntry autoComplete="new-password" textContentType="newPassword" />
+      </Card></View>
       <ActionButton label="Create account" onPress={handleRegister} loading={loading} />
       <View style={styles.divider} />
-      <Text style={styles.switchPrompt}>Already have an account?</Text>
+      <AppText style={styles.switchPrompt}>Already have an account?</AppText>
       <ActionButton label="Sign in" variant="secondary" onPress={() => navigation.navigate('Login')} style={styles.switchButton} />
     </AuthLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionTitle: { color: theme.colors.text, fontSize: 22, fontWeight: '800' },
+  sectionTitle: { color: theme.colors.text, ...theme.typography.section },
   sectionDescription: { color: theme.colors.mutedText, fontSize: theme.type.caption, marginTop: theme.spacing.xs },
   banner: { marginTop: theme.spacing.md },
   fields: { marginTop: theme.spacing.lg },
-  divider: { height: 1, backgroundColor: theme.colors.border, marginVertical: theme.spacing.lg },
-  subheading: { color: theme.colors.text, fontSize: 18, fontWeight: '700', marginBottom: theme.spacing.xs },
+  divider: { height: 1, backgroundColor: theme.colors.separator, marginVertical: theme.spacing.lg },
+  subheading: { color: theme.colors.text, ...theme.typography.label, marginBottom: theme.spacing.xs },
   passwordHint: { color: theme.colors.mutedText, fontSize: theme.type.caption, marginBottom: theme.spacing.lg },
   switchPrompt: { color: theme.colors.mutedText, fontSize: theme.type.caption, textAlign: 'center' },
   switchButton: { marginTop: theme.spacing.sm },

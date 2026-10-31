@@ -15,7 +15,7 @@ export default function CodeEntry({ value, onChangeText, error, label = '6-digit
     <AppText variant="label">{label}</AppText>
     <View style={{ position: 'relative', alignSelf: 'stretch' }}>
       <View pointerEvents="none" accessibilityElementsHidden importantForAccessibility="no-hide-descendants"
-        style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.md }}>
+        style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: theme.spacing.md }}>
         {[0, 3].map(start => <View key={start} style={{ flexDirection: 'row', gap: theme.spacing.sm }}>
           {[start, start + 1, start + 2].map(index => <View key={index} style={{ minWidth: 48, minHeight: 48,
             paddingVertical: theme.spacing.sm, alignItems: 'center', justifyContent: 'center',
