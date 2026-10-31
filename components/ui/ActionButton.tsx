@@ -1,88 +1,30 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
-import type { StyleProp, ViewStyle } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, Pressable, View, type StyleProp, type ViewStyle } from 'react-native';
 import { theme } from '@/constants/theme';
+import AppText from './AppText';
 
-type Props = {
-  label: string;
-  onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'danger';
-  disabled?: boolean;
-  loading?: boolean;
-  accessibilityHint?: string;
-  style?: StyleProp<ViewStyle>;
-};
+type Props = { label: string; onPress: () => void; variant?: 'primary' | 'secondary' | 'danger';
+  disabled?: boolean; loading?: boolean; accessibilityHint?: string; style?: StyleProp<ViewStyle> };
 
-export default function ActionButton({
-  label,
-  onPress,
-  variant = 'primary',
-  disabled = false,
-  loading = false,
-  accessibilityHint,
-  style,
-}: Props) {
+export default function ActionButton({ label, onPress, variant = 'primary', disabled = false,
+  loading = false, accessibilityHint, style }: Props) {
+  const [focused, setFocused] = useState(false);
   const unavailable = disabled || loading;
-  const textColor = variant === 'secondary'
-    ? theme.colors.accent
-    : variant === 'danger' ? theme.colors.dangerText : theme.colors.accentText;
-
-  return (
-    <Pressable
-      onPress={onPress}
-      disabled={unavailable}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      accessibilityHint={accessibilityHint}
-      accessibilityState={{ disabled: unavailable, busy: loading }}
-      style={({ pressed }) => [
-        styles.button,
-        variant === 'primary' && styles.primary,
-        variant === 'secondary' && styles.secondary,
-        variant === 'danger' && styles.danger,
-        (pressed || unavailable) && styles.dimmed,
-        style,
-      ]}
-    >
-      {loading && <ActivityIndicator color={textColor} style={styles.spinner} />}
-      <Text style={[styles.label, { color: textColor }]}>{label}</Text>
-    </Pressable>
-  );
+  const color = disabled ? theme.colors.muted : variant === 'secondary' ? theme.colors.primary : theme.colors.onPrimary;
+  const fill = disabled ? theme.colors.background : variant === 'secondary' ? theme.colors.surface
+    : variant === 'danger' ? theme.colors.danger : theme.colors.primary;
+  return <Pressable onPress={onPress} disabled={unavailable} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
+    accessibilityRole="button" accessibilityLabel={label} accessibilityHint={accessibilityHint}
+    accessibilityState={{ disabled: unavailable, busy: loading }}
+    style={({ pressed }) => [style, { width: '100%', minHeight: 48, minWidth: 48,
+      padding: theme.spacing.compact, borderWidth: 2, borderRadius: theme.radius.sm,
+      borderColor: focused ? theme.colors.primary : disabled ? theme.colors.border : variant === 'danger' ? theme.colors.danger : theme.colors.primary,
+      backgroundColor: pressed && variant === 'secondary' ? theme.colors.accentSurface : fill,
+      flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: theme.spacing.sm,
+      transform: [{ scale: pressed ? 0.99 : 1 }] }]}>
+    {focused && <View pointerEvents="none" style={{ position: 'absolute', top: -6, bottom: -6, left: -6, right: -6,
+      borderWidth: 2, borderColor: theme.colors.primary, borderRadius: theme.radius.sm + 4 }} />}
+    {loading && <ActivityIndicator color={color} />}
+    <AppText variant="label" style={{ color, flexShrink: 1, textAlign: 'center' }}>{label}</AppText>
+  </Pressable>;
 }
-
-const styles = StyleSheet.create({
-  button: {
-    minHeight: theme.touchTarget,
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.md,
-    borderRadius: theme.radius.sm,
-    borderWidth: 1,
-  },
-  primary: {
-    backgroundColor: theme.colors.accent,
-    borderColor: theme.colors.accent,
-  },
-  secondary: {
-    backgroundColor: theme.colors.surface,
-    borderColor: theme.colors.accent,
-  },
-  danger: {
-    backgroundColor: theme.colors.danger,
-    borderColor: theme.colors.danger,
-  },
-  dimmed: {
-    opacity: 0.7,
-  },
-  spinner: {
-    marginRight: theme.spacing.sm,
-  },
-  label: {
-    fontSize: theme.type.body,
-    fontWeight: '700',
-    textAlign: 'center',
-    flexShrink: 1,
-  },
-});

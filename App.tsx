@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { NavigationContainer } from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import TypographyProvider from '@/components/ui/TypographyProvider';
+import { theme } from '@/constants/theme';
 import SplashScreen from '@/components/ui/screen/SplashScreen';
 import AuthStackNavigator from '@/navigation/stack-navigation/AuthStackNavigator';
 import AppStackNavigator from '@/navigation/stack-navigation/AppStackNavigator';
@@ -62,13 +65,17 @@ function App() {
   }
 
   return (
-    <NavigationContainer key={isAuthenticated ? 'signed-in' : 'public'}>
+    <NavigationContainer key={isAuthenticated ? 'signed-in' : 'public'} theme={{
+      ...DefaultTheme, colors: { ...DefaultTheme.colors, primary: theme.colors.primary,
+        background: theme.colors.background, card: theme.colors.surface,
+        text: theme.colors.text, border: theme.colors.separator, notification: theme.colors.danger },
+    }}>
       {isAuthenticated ? <AppStackNavigator /> : <AuthStackNavigator />}
     </NavigationContainer>
   );
 }
 
-export default function EntryPoint() {
+function ConfiguredEntry() {
   if (!getBaseUrl()) {
     return (
       <View style={styles.container}>
@@ -84,6 +91,10 @@ export default function EntryPoint() {
       <App />
     </Provider>
   );
+}
+
+export default function EntryPoint() {
+  return <SafeAreaProvider><TypographyProvider><ConfiguredEntry /></TypographyProvider></SafeAreaProvider>;
 }
 
 const styles = StyleSheet.create({
