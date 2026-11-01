@@ -159,7 +159,7 @@ export default function HomePageScreen({ navigation }: Props) {
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <AppText variant="label" style={{ fontSize: 15, color: theme.colors.text }}>Live Telemetry</AppText>
           <Pressable
-            onPress={() => navigation.navigate('Weather')}
+            onPress={() => navigation.navigate('Conditions', { section: 'weather' })}
             accessibilityRole="button"
             accessibilityLabel="Open conditions">
             <AppText variant="caption" style={{ color: theme.colors.primary, fontWeight: '600' }}>
@@ -173,7 +173,7 @@ export default function HomePageScreen({ navigation }: Props) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Open weather details"
-            onPress={() => navigation.navigate('Weather')}
+            onPress={() => navigation.navigate('Conditions', { section: 'weather' })}
             style={({ pressed }) => ({
               flex: 1,
               backgroundColor: pressed ? theme.colors.accentSurface : theme.colors.surface,
@@ -231,7 +231,7 @@ export default function HomePageScreen({ navigation }: Props) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Open sea wave telemetry"
-            onPress={() => navigation.navigate('SeaWave')}
+            onPress={() => navigation.navigate('Conditions', { section: 'sea' })}
             style={({ pressed }) => ({
               flex: 1,
               backgroundColor: pressed ? theme.colors.accentSurface : theme.colors.surface,
@@ -296,7 +296,7 @@ export default function HomePageScreen({ navigation }: Props) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Open route and fuel calculation"
-            onPress={() => navigation.navigate('Route')}
+            onPress={() => navigation.navigate('Estimate')}
             style={({ pressed }) => ({
               flex: 1,
               padding: 12,
@@ -324,7 +324,7 @@ export default function HomePageScreen({ navigation }: Props) {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Open crew messaging"
-            onPress={() => navigation.navigate('UserListScreen')}
+            onPress={() => navigation.navigate('Messages')}
             style={({ pressed }) => ({
               flex: 1,
               padding: 12,
