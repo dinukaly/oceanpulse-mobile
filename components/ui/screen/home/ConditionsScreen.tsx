@@ -170,8 +170,8 @@ export default function ConditionsScreen({ route }: Props) {
           flexDirection: 'row',
           backgroundColor: '#E2E8F0',
           padding: 4,
-          borderRadius: 12,
-          gap: 4,
+          borderRadius: 14,
+          gap: 6,
         }}>
           <Pressable
             accessibilityRole="tab"
@@ -183,28 +183,28 @@ export default function ConditionsScreen({ route }: Props) {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 6,
-              paddingVertical: 10,
-              borderRadius: 8,
-              backgroundColor: activeTab === 'weather' ? theme.colors.surface : 'transparent',
-              shadowColor: activeTab === 'weather' ? '#000000' : 'transparent',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.1,
-              shadowRadius: 2,
-              elevation: activeTab === 'weather' ? 2 : 0,
+              gap: 8,
+              paddingVertical: 12,
+              borderRadius: 10,
+              backgroundColor: activeTab === 'weather' ? '#0284C7' : 'transparent',
+              shadowColor: activeTab === 'weather' ? '#0284C7' : 'transparent',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 4,
+              elevation: activeTab === 'weather' ? 3 : 0,
             }}>
             <Ionicons
-              name={activeTab === 'weather' ? 'partly-sunny' : 'partly-sunny-outline'}
-              size={18}
-              color={activeTab === 'weather' ? theme.colors.primary : theme.colors.muted}
+              name={activeTab === 'weather' ? 'sunny' : 'sunny-outline'}
+              size={20}
+              color={activeTab === 'weather' ? '#FFFFFF' : '#64748B'}
               accessible={false}
             />
             <AppText
               variant="label"
               style={{
-                fontSize: 13,
-                color: activeTab === 'weather' ? theme.colors.primary : theme.colors.muted,
-                fontWeight: activeTab === 'weather' ? '700' : '600',
+                fontSize: 14,
+                color: activeTab === 'weather' ? '#FFFFFF' : '#64748B',
+                fontWeight: '800',
               }}>
               Coastal Weather
             </AppText>
@@ -220,28 +220,28 @@ export default function ConditionsScreen({ route }: Props) {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 6,
-              paddingVertical: 10,
-              borderRadius: 8,
-              backgroundColor: activeTab === 'sea' ? theme.colors.surface : 'transparent',
-              shadowColor: activeTab === 'sea' ? '#000000' : 'transparent',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.1,
-              shadowRadius: 2,
-              elevation: activeTab === 'sea' ? 2 : 0,
+              gap: 8,
+              paddingVertical: 12,
+              borderRadius: 10,
+              backgroundColor: activeTab === 'sea' ? '#059669' : 'transparent',
+              shadowColor: activeTab === 'sea' ? '#059669' : 'transparent',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.2,
+              shadowRadius: 4,
+              elevation: activeTab === 'sea' ? 3 : 0,
             }}>
             <Ionicons
               name={activeTab === 'sea' ? 'water' : 'water-outline'}
-              size={18}
-              color={activeTab === 'sea' ? theme.colors.primary : theme.colors.muted}
+              size={20}
+              color={activeTab === 'sea' ? '#FFFFFF' : '#64748B'}
               accessible={false}
             />
             <AppText
               variant="label"
               style={{
-                fontSize: 13,
-                color: activeTab === 'sea' ? theme.colors.primary : theme.colors.muted,
-                fontWeight: activeTab === 'sea' ? '700' : '600',
+                fontSize: 14,
+                color: activeTab === 'sea' ? '#FFFFFF' : '#64748B',
+                fontWeight: '800',
               }}>
               Sea & Waves
             </AppText>
@@ -525,37 +525,75 @@ export default function ConditionsScreen({ route }: Props) {
           {!marineLoading && marineData && (
             <View style={{ gap: 14 }}>
               {/* Hero Wave Height Card */}
-              <Card style={{
-                backgroundColor: theme.colors.accentSurface,
-                borderColor: '#BAE6FD',
-                borderWidth: 1.5,
+              <View style={{
+                backgroundColor: '#059669',
                 borderRadius: 16,
                 padding: 18,
                 gap: 12,
+                shadowColor: '#059669',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.25,
+                shadowRadius: 8,
+                elevation: 4,
               }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <View>
-                    <AppText variant="caption" style={{ color: theme.colors.primary, textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 11, fontWeight: '700' }}>
-                      SIGNIFICANT WAVE HEIGHT
-                    </AppText>
-                    <AppText variant="display" style={{ color: theme.colors.primary, fontSize: 44, lineHeight: 52 }}>
+                    <View style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      paddingHorizontal: 8,
+                      paddingVertical: 3,
+                      borderRadius: 6,
+                      alignSelf: 'flex-start',
+                      marginBottom: 6,
+                    }}>
+                      <AppText style={{ color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 11, fontWeight: '800' }}>
+                        WAVE HEIGHT
+                      </AppText>
+                    </View>
+                    <AppText style={{ color: '#FFFFFF', fontSize: 44, fontWeight: '800', lineHeight: 50 }}>
                       {forecast.selected?.waveHeightM !== null && forecast.selected?.waveHeightM !== undefined
                         ? `${forecast.selected.waveHeightM.toFixed(1)} m`
                         : 'Unavailable'}
                     </AppText>
                   </View>
-                  <View style={{ width: 56, height: 56, borderRadius: 16, backgroundColor: theme.colors.surface, alignItems: 'center', justifyContent: 'center' }}>
-                    <Ionicons name="water" size={32} color={theme.colors.primary} accessible={false} />
+                  <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: 'rgba(255, 255, 255, 0.2)', alignItems: 'center', justifyContent: 'center' }}>
+                    <Ionicons name="water" size={36} color="#FFFFFF" accessible={false} />
                   </View>
                 </View>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingTop: 4, borderTopWidth: 1, borderTopColor: '#BAE6FD' }}>
-                  <Ionicons name="time-outline" size={16} color={theme.colors.primary} accessible={false} />
-                  <AppText variant="caption" style={{ color: theme.colors.primary, fontWeight: '600', fontSize: 12 }}>
+                {/* Color-coded Safety Status Chip */}
+                {forecast.selected?.waveHeightM !== null && forecast.selected?.waveHeightM !== undefined && (
+                  <View style={{
+                    backgroundColor: forecast.selected.waveHeightM > 2.5 ? '#DC2626' : forecast.selected.waveHeightM >= 1.5 ? '#D97706' : '#15803D',
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    borderRadius: 8,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 6,
+                  }}>
+                    <Ionicons
+                      name={forecast.selected.waveHeightM > 2.5 ? 'warning' : 'shield-checkmark'}
+                      size={16}
+                      color="#FFFFFF"
+                    />
+                    <AppText style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 12 }}>
+                      {forecast.selected.waveHeightM > 2.5
+                        ? 'ROUGH SEA - EXTREME CAUTION'
+                        : forecast.selected.waveHeightM >= 1.5
+                        ? 'MODERATE SWELL - WATCH CONDITIONS'
+                        : 'CALM / NORMAL SEA - SAFE CONDITIONS'}
+                    </AppText>
+                  </View>
+                )}
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingTop: 4, borderTopWidth: 1, borderTopColor: 'rgba(255, 255, 255, 0.2)' }}>
+                  <Ionicons name="time-outline" size={16} color="#D1FAE5" accessible={false} />
+                  <AppText style={{ color: '#D1FAE5', fontWeight: '600', fontSize: 12 }}>
                     Forecast Hour: {forecast.selected?.time ? formatUtc(forecast.selected.time) : 'Instantaneous'}
                   </AppText>
                 </View>
-              </Card>
+              </View>
 
               {/* Coordinates Section (2-Column) */}
               <View style={{ flexDirection: isCompact ? 'column' : 'row', gap: 10 }}>
