@@ -19,7 +19,8 @@ export default function HomePageScreen({ navigation }: Props) {
   const [username, setUsername] = useState('Crew member');
   const [weather, setWeather] = useState<WeatherConditions | null>(null);
   const [marine, setMarine] = useState<MarineConditions | null>(null);
-  const { fontScale } = useWindowDimensions();
+  const { fontScale, width } = useWindowDimensions();
+  const isCompact = width < 360;
 
   useEffect(() => {
     let active = true;
@@ -49,341 +50,304 @@ export default function HomePageScreen({ navigation }: Props) {
   }, []);
 
   return (
-    <FormScreen edges={['top', 'left', 'right']} contentStyle={{ gap: theme.spacing.lg, paddingBottom: theme.spacing.xl }}>
-      {/* 1. Compact Header & Greeting */}
-      <View style={{ gap: theme.spacing.sm }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.compact }}>
-          <Image
-            source={require('../../../../assets/logo/logo.png')}
-            style={{ width: 40, height: 40, borderRadius: theme.radius.sm }}
-            resizeMode="contain"
-            accessible={false}
-          />
-          <View style={{ flex: 1 }}>
-            <AppText variant="section" style={{ color: theme.colors.primary }}>OceanPulse</AppText>
-            <AppText variant="caption" style={{ color: theme.colors.muted }}>Coastal fishing telemetry</AppText>
+    <FormScreen edges={['top', 'left', 'right']} contentStyle={{ gap: 16, paddingBottom: 24 }}>
+      {/* 1. Header & Location Identity */}
+      <View style={{ gap: 10 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Image
+              source={require('../../../../assets/logo/logo.png')}
+              style={{ width: 36, height: 36, borderRadius: theme.radius.sm }}
+              resizeMode="contain"
+              accessible={false}
+            />
+            <View>
+              <AppText variant="section" style={{ color: theme.colors.primary, lineHeight: 22 }}>OceanPulse</AppText>
+              <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 11 }}>Vessel Marine Terminal</AppText>
+            </View>
+          </View>
+          <View style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+            paddingHorizontal: 10,
+            paddingVertical: 4,
+            borderRadius: theme.radius.full,
+            backgroundColor: theme.colors.accentSurface,
+          }}>
+            <Ionicons name="location-sharp" size={12} color={theme.colors.primary} accessible={false} />
+            <AppText variant="caption" style={{ color: theme.colors.primary, fontWeight: '600', fontSize: 11 }}>
+              {weather?.location.name || 'Sri Lanka Waters'}
+            </AppText>
           </View>
         </View>
 
-        <View style={{ gap: 2, paddingTop: theme.spacing.xs }}>
-          <AppText variant="title" accessibilityRole="header">Hello, {username}</AppText>
-          <AppText style={{ color: theme.colors.muted }}>
-            Marine telemetry and trip overview
+        <View>
+          <AppText variant="title" accessibilityRole="header" style={{ fontSize: 24, lineHeight: 30 }}>
+            Hello, {username}
+          </AppText>
+          <AppText variant="caption" style={{ color: theme.colors.muted }}>
+            Coastal telemetry and voyage planning
           </AppText>
         </View>
       </View>
 
-      {/* 2. Coastal Weather Summary */}
-      <Card style={{ gap: theme.spacing.compact }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
-            <View style={{
-              width: 36,
-              height: 36,
-              borderRadius: theme.radius.sm,
-              backgroundColor: theme.colors.accentSurface,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Ionicons name="partly-sunny-outline" size={20} color={theme.colors.primary} accessible={false} />
-            </View>
-            <AppText variant="label">Coastal Weather</AppText>
-          </View>
-          {weather?.location.name && (
-            <View style={{
-              paddingHorizontal: theme.spacing.sm,
-              paddingVertical: 2,
-              borderRadius: theme.radius.full,
-              backgroundColor: theme.colors.accentSurface,
-            }}>
-              <AppText variant="caption" style={{ color: theme.colors.primary, fontWeight: '600' }}>
-                {weather.location.name}{weather.location.country ? `, ${weather.location.country}` : ''}
-              </AppText>
-            </View>
-          )}
-        </View>
-
-        {weather ? (
-          <View style={{ gap: theme.spacing.sm }}>
-            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: theme.spacing.sm }}>
-              <AppText variant="display" style={{ color: theme.colors.text }}>
-                {weather.temperatureC === null ? '--' : `${Math.round(weather.temperatureC)}°C`}
-              </AppText>
-              <AppText variant="body" style={{ color: theme.colors.muted }}>
-                {weather.description || 'Current conditions'}
-              </AppText>
-            </View>
-
-            <View style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              gap: theme.spacing.sm,
-              paddingVertical: theme.spacing.xs,
-              borderTopWidth: 1,
-              borderTopColor: theme.colors.separator,
-            }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, minWidth: 90 }}>
-                <Ionicons name="navigate-outline" size={16} color={theme.colors.primary} accessible={false} />
-                <AppText variant="caption">Wind: {formatValue(weather.windSpeedMps, 'm/s')}</AppText>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, minWidth: 90 }}>
-                <Ionicons name="water-outline" size={16} color={theme.colors.primary} accessible={false} />
-                <AppText variant="caption">Humidity: {formatValue(weather.humidityPercent, '%')}</AppText>
-              </View>
-            </View>
-
-            <View style={{ gap: 2 }}>
-              <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 12 }}>
-                Location: {weather.location.latitude.toFixed(2)}° N, {weather.location.longitude.toFixed(2)}° E
-              </AppText>
-              <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 12 }}>
-                Data time: {weather.dataTime ? formatUtc(weather.dataTime) : 'Unavailable'}
-              </AppText>
-            </View>
-
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="View detailed weather forecast"
-              onPress={() => navigation.navigate('Weather')}
-              style={({ pressed }) => ({
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingTop: theme.spacing.xs,
-                borderTopWidth: 1,
-                borderTopColor: theme.colors.separator,
-                opacity: pressed ? 0.7 : 1,
-              })}>
-              <AppText variant="label" style={{ color: theme.colors.primary }}>View full weather forecast</AppText>
-              <Ionicons name="arrow-forward" size={18} color={theme.colors.primary} accessible={false} />
-            </Pressable>
-          </View>
-        ) : (
-          <View style={{ gap: theme.spacing.sm }}>
-            <AppText variant="body" style={{ color: theme.colors.muted }}>
-              No city weather loaded yet. Search for a coastal city or harbor to view temperature, wind, and sky conditions.
-            </AppText>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Search coastal city weather"
-              onPress={() => navigation.navigate('Weather')}
-              style={({ pressed }) => ({
-                minHeight: 44,
-                borderRadius: theme.radius.sm,
-                borderWidth: 1,
-                borderColor: theme.colors.primary,
-                backgroundColor: pressed ? theme.colors.accentSurface : theme.colors.surface,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: theme.spacing.sm,
-                paddingHorizontal: theme.spacing.md,
-              })}>
-              <Ionicons name="search-outline" size={18} color={theme.colors.primary} accessible={false} />
-              <AppText variant="label" style={{ color: theme.colors.primary }}>Search city weather</AppText>
-            </Pressable>
-          </View>
-        )}
-      </Card>
-
-      {/* 3. Sea Wave Conditions Summary */}
-      <Card style={{ gap: theme.spacing.compact }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
-            <View style={{
-              width: 36,
-              height: 36,
-              borderRadius: theme.radius.sm,
-              backgroundColor: theme.colors.accentSurface,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Ionicons name="water-outline" size={20} color={theme.colors.primary} accessible={false} />
-            </View>
-            <AppText variant="label">Sea Conditions</AppText>
-          </View>
-          {marine?.location && (
-            <View style={{
-              paddingHorizontal: theme.spacing.sm,
-              paddingVertical: 2,
-              borderRadius: theme.radius.full,
-              backgroundColor: theme.colors.accentSurface,
-            }}>
-              <AppText variant="caption" style={{ color: theme.colors.primary, fontWeight: '600' }}>
-                {marine.location.latitude.toFixed(2)}°N, {marine.location.longitude.toFixed(2)}°E
-              </AppText>
-            </View>
-          )}
-        </View>
-
-        {marine && marine.hourly.length > 0 ? (
-          <View style={{ gap: theme.spacing.sm }}>
-            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: theme.spacing.sm }}>
-              <AppText variant="display" style={{ color: theme.colors.text }}>
-                {formatValue(marine.hourly[0]?.waveHeightM ?? null, 'm')}
-              </AppText>
-              <AppText variant="body" style={{ color: theme.colors.muted }}>
-                Significant wave height
-              </AppText>
-            </View>
-
-            <View style={{ gap: 2 }}>
-              <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 12 }}>
-                Requested grid: {marine.requestedLocation.latitude.toFixed(4)}, {marine.requestedLocation.longitude.toFixed(4)}
-              </AppText>
-              <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 12 }}>
-                Forecast hour: {marine.hourly[0]?.time ? formatUtc(marine.hourly[0].time) : 'Unavailable'}
-              </AppText>
-              <AppText variant="caption" style={{ color: theme.colors.warning, fontSize: 12, marginTop: 2 }}>
-                Forecast estimate only. No safety verdict.
-              </AppText>
-            </View>
-
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="View sea wave forecast and hourly progression"
-              onPress={() => navigation.navigate('SeaWave')}
-              style={({ pressed }) => ({
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingTop: theme.spacing.xs,
-                borderTopWidth: 1,
-                borderTopColor: theme.colors.separator,
-                opacity: pressed ? 0.7 : 1,
-              })}>
-              <AppText variant="label" style={{ color: theme.colors.primary }}>View hourly wave progression</AppText>
-              <Ionicons name="arrow-forward" size={18} color={theme.colors.primary} accessible={false} />
-            </Pressable>
-          </View>
-        ) : (
-          <View style={{ gap: theme.spacing.sm }}>
-            <AppText variant="body" style={{ color: theme.colors.muted }}>
-              Marine wave telemetry requires coordinates or location permission. No GPS lookup is performed on home launch.
-            </AppText>
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Open sea wave conditions"
-              onPress={() => navigation.navigate('SeaWave')}
-              style={({ pressed }) => ({
-                minHeight: 44,
-                borderRadius: theme.radius.sm,
-                borderWidth: 1,
-                borderColor: theme.colors.primary,
-                backgroundColor: pressed ? theme.colors.accentSurface : theme.colors.surface,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: theme.spacing.sm,
-                paddingHorizontal: theme.spacing.md,
-              })}>
-              <Ionicons name="boat-outline" size={18} color={theme.colors.primary} accessible={false} />
-              <AppText variant="label" style={{ color: theme.colors.primary }}>Check sea wave forecast</AppText>
-            </Pressable>
-          </View>
-        )}
-      </Card>
-
-      {/* 4. Restrained SOS Telemetry Record */}
+      {/* 2. Authentic Emergency SOS Distress Beacon */}
       <Card style={{
         backgroundColor: theme.colors.dangerSurface,
         borderColor: theme.colors.danger,
-        borderWidth: 1,
-        gap: theme.spacing.sm,
+        borderWidth: 1.5,
+        borderRadius: 14,
+        padding: 14,
+        gap: 12,
       }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
-          <Ionicons name="alert-circle" size={24} color={theme.colors.danger} accessible={false} />
-          <AppText variant="label" style={{ color: theme.colors.danger }}>Emergency SOS Record</AppText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Ionicons name="warning" size={20} color={theme.colors.danger} accessible={false} />
+            <AppText variant="label" style={{ color: theme.colors.danger, fontSize: 13, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+              Emergency Distress (SOS)
+            </AppText>
+          </View>
+          <View style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+            backgroundColor: '#FEE2E2',
+            paddingHorizontal: 8,
+            paddingVertical: 2,
+            borderRadius: theme.radius.full,
+          }}>
+            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: theme.colors.danger }} />
+            <AppText variant="caption" style={{ color: theme.colors.danger, fontSize: 10, fontWeight: '700' }}>
+              GPS READY
+            </AppText>
+          </View>
         </View>
 
-        <AppText variant="caption" style={{ color: theme.colors.danger, lineHeight: 20 }}>
-          OceanPulse records vessel coordinates to the database only. Does NOT dispatch rescue teams or alert coast guard.
+        <AppText variant="caption" style={{ color: '#7F1D1D', fontSize: 12, lineHeight: 17 }}>
+          Instantly transmit distress beacon and lock vessel coordinates for emergency assistance.
         </AppText>
 
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Record emergency SOS. No rescue dispatch."
+          accessibilityLabel="Broadcast SOS Alert"
           onPress={() => navigation.navigate('SOSSCREEN')}
           style={({ pressed }) => ({
-            minHeight: 44,
-            borderRadius: theme.radius.sm,
+            minHeight: 46,
+            borderRadius: 10,
             backgroundColor: pressed ? '#991B1B' : theme.colors.danger,
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: theme.spacing.sm,
-            paddingHorizontal: theme.spacing.md,
+            gap: 8,
+            paddingHorizontal: 16,
+            shadowColor: theme.colors.danger,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.2,
+            shadowRadius: 4,
+            elevation: 2,
           })}>
-          <Ionicons name="warning-outline" size={18} color="#FFFFFF" accessible={false} />
-          <AppText variant="label" style={{ color: '#FFFFFF' }}>Record SOS request</AppText>
+          <Ionicons name="radio" size={18} color="#FFFFFF" accessible={false} />
+          <AppText variant="label" style={{ color: '#FFFFFF', fontSize: 14, fontWeight: '700', letterSpacing: 0.5 }}>
+            BROADCAST SOS ALERT
+          </AppText>
         </Pressable>
       </Card>
 
-      {/* 5. Direct Planning & Communication Tools */}
-      <View style={{ gap: theme.spacing.sm }}>
-        <AppText variant="label" style={{ color: theme.colors.text }}>Trip Planning & Crew Tools</AppText>
+      {/* 3. Marine Telemetry (Weather & Sea Conditions Hub) */}
+      <View style={{ gap: 10 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <AppText variant="label" style={{ fontSize: 15, color: theme.colors.text }}>Live Telemetry</AppText>
+          <Pressable
+            onPress={() => navigation.navigate('Weather')}
+            accessibilityRole="button"
+            accessibilityLabel="Open conditions">
+            <AppText variant="caption" style={{ color: theme.colors.primary, fontWeight: '600' }}>
+              Full Forecast →
+            </AppText>
+          </Pressable>
+        </View>
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Open direct route and fuel estimation"
-          onPress={() => navigation.navigate('Route')}
-          style={({ pressed }) => ({
-            padding: theme.spacing.md,
-            borderRadius: theme.radius.md,
-            borderWidth: 1,
-            borderColor: theme.colors.separator,
-            backgroundColor: pressed ? theme.colors.accentSurface : theme.colors.surface,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: theme.spacing.compact,
-          })}>
-          <View style={{
-            width: 40,
-            height: 40,
-            borderRadius: theme.radius.sm,
-            backgroundColor: theme.colors.accentSurface,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <Ionicons name="map-outline" size={22} color={theme.colors.primary} accessible={false} />
-          </View>
-          <View style={{ flex: 1, gap: 2 }}>
-            <AppText variant="label">Route & Fuel Estimate</AppText>
-            <AppText variant="caption" style={{ color: theme.colors.muted }}>Direct distance and fuel consumption</AppText>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.muted} accessible={false} />
-        </Pressable>
+        <View style={{ flexDirection: isCompact ? 'column' : 'row', gap: 12 }}>
+          {/* Weather Card */}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open weather details"
+            onPress={() => navigation.navigate('Weather')}
+            style={({ pressed }) => ({
+              flex: 1,
+              backgroundColor: pressed ? theme.colors.accentSurface : theme.colors.surface,
+              borderColor: theme.colors.separator,
+              borderWidth: 1,
+              borderRadius: 12,
+              padding: 12,
+              gap: 8,
+            })}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: theme.colors.accentSurface, alignItems: 'center', justifyContent: 'center' }}>
+                <Ionicons name="partly-sunny" size={18} color={theme.colors.primary} accessible={false} />
+              </View>
+              <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 11, fontWeight: '600' }}>
+                {weather?.location.name || 'Weather'}
+              </AppText>
+            </View>
 
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Open crew messages"
-          onPress={() => navigation.navigate('UserListScreen')}
-          style={({ pressed }) => ({
-            padding: theme.spacing.md,
-            borderRadius: theme.radius.md,
-            borderWidth: 1,
-            borderColor: theme.colors.separator,
-            backgroundColor: pressed ? theme.colors.accentSurface : theme.colors.surface,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: theme.spacing.compact,
-          })}>
-          <View style={{
-            width: 40,
-            height: 40,
-            borderRadius: theme.radius.sm,
-            backgroundColor: theme.colors.accentSurface,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-            <Ionicons name="chatbubbles-outline" size={22} color={theme.colors.primary} accessible={false} />
-          </View>
-          <View style={{ flex: 1, gap: 2 }}>
-            <AppText variant="label">Crew Messages</AppText>
-            <AppText variant="caption" style={{ color: theme.colors.muted }}>Contact registered crew members</AppText>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.muted} accessible={false} />
-        </Pressable>
+            {weather ? (
+              <View style={{ gap: 4 }}>
+                <AppText variant="display" style={{ fontSize: 28, lineHeight: 32, color: theme.colors.text }}>
+                  {weather.temperatureC === null ? '--' : `${Math.round(weather.temperatureC)}°C`}
+                </AppText>
+                <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 11 }} numberOfLines={1}>
+                  {weather.description || 'Clear sky'}
+                </AppText>
+                <View style={{ flexDirection: 'row', gap: 8, paddingTop: 4, borderTopWidth: 1, borderTopColor: theme.colors.separator }}>
+                  <AppText variant="caption" style={{ fontSize: 10, color: theme.colors.primary, fontWeight: '600' }}>
+                    💨 {formatValue(weather.windSpeedMps, 'm/s')}
+                  </AppText>
+                  <AppText variant="caption" style={{ fontSize: 10, color: theme.colors.muted }}>
+                    💧 {formatValue(weather.humidityPercent, '%')}
+                  </AppText>
+                </View>
+              </View>
+            ) : (
+              <View style={{ gap: 6, paddingVertical: 4 }}>
+                <AppText variant="body" style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text }}>
+                  Check Weather
+                </AppText>
+                <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 11 }}>
+                  Tap to search city
+                </AppText>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingTop: 2 }}>
+                  <Ionicons name="search" size={12} color={theme.colors.primary} accessible={false} />
+                  <AppText variant="caption" style={{ color: theme.colors.primary, fontSize: 11, fontWeight: '600' }}>
+                    Select Location
+                  </AppText>
+                </View>
+              </View>
+            )}
+          </Pressable>
+
+          {/* Sea Conditions Card */}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open sea wave telemetry"
+            onPress={() => navigation.navigate('SeaWave')}
+            style={({ pressed }) => ({
+              flex: 1,
+              backgroundColor: pressed ? theme.colors.accentSurface : theme.colors.surface,
+              borderColor: theme.colors.separator,
+              borderWidth: 1,
+              borderRadius: 12,
+              padding: 12,
+              gap: 8,
+            })}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: theme.colors.accentSurface, alignItems: 'center', justifyContent: 'center' }}>
+                <Ionicons name="water" size={18} color={theme.colors.primary} accessible={false} />
+              </View>
+              <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 11, fontWeight: '600' }}>
+                Wave Height
+              </AppText>
+            </View>
+
+            {marine && marine.hourly.length > 0 ? (
+              <View style={{ gap: 4 }}>
+                <AppText variant="display" style={{ fontSize: 28, lineHeight: 32, color: theme.colors.text }}>
+                  {formatValue(marine.hourly[0]?.waveHeightM ?? null, 'm')}
+                </AppText>
+                <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 11 }} numberOfLines={1}>
+                  Significant Swell
+                </AppText>
+                <View style={{ flexDirection: 'row', gap: 8, paddingTop: 4, borderTopWidth: 1, borderTopColor: theme.colors.separator }}>
+                  <AppText variant="caption" style={{ fontSize: 10, color: theme.colors.primary, fontWeight: '600' }}>
+                    ⏱ {marine.hourly[0]?.time ? formatUtc(marine.hourly[0].time).slice(11, 16) + ' UTC' : 'Live'}
+                  </AppText>
+                  <AppText variant="caption" style={{ fontSize: 10, color: theme.colors.muted }}>
+                    📍 {marine.location.latitude.toFixed(1)}°N
+                  </AppText>
+                </View>
+              </View>
+            ) : (
+              <View style={{ gap: 6, paddingVertical: 4 }}>
+                <AppText variant="body" style={{ fontSize: 13, fontWeight: '600', color: theme.colors.text }}>
+                  Sea Telemetry
+                </AppText>
+                <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 11 }}>
+                  Wave height & swell
+                </AppText>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingTop: 2 }}>
+                  <Ionicons name="boat" size={12} color={theme.colors.primary} accessible={false} />
+                  <AppText variant="caption" style={{ color: theme.colors.primary, fontSize: 11, fontWeight: '600' }}>
+                    Load Marine Data
+                  </AppText>
+                </View>
+              </View>
+            )}
+          </Pressable>
+        </View>
+      </View>
+
+      {/* 4. Voyage Planning & Crew Communication */}
+      <View style={{ gap: 10 }}>
+        <AppText variant="label" style={{ fontSize: 15, color: theme.colors.text }}>Voyage & Crew</AppText>
+
+        <View style={{ flexDirection: isCompact ? 'column' : 'row', gap: 12 }}>
+          {/* Route & Fuel Estimate */}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open route and fuel calculation"
+            onPress={() => navigation.navigate('Route')}
+            style={({ pressed }) => ({
+              flex: 1,
+              padding: 12,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: theme.colors.separator,
+              backgroundColor: pressed ? theme.colors.accentSurface : theme.colors.surface,
+              gap: 8,
+            })}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: theme.colors.accentSurface, alignItems: 'center', justifyContent: 'center' }}>
+                <Ionicons name="navigate-circle-outline" size={22} color={theme.colors.primary} accessible={false} />
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={theme.colors.muted} accessible={false} />
+            </View>
+            <View>
+              <AppText variant="label" style={{ fontSize: 14 }}>Distance & Fuel</AppText>
+              <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 11 }}>
+                Nautical miles & rate calculator
+              </AppText>
+            </View>
+          </Pressable>
+
+          {/* Crew Messages */}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Open crew messaging"
+            onPress={() => navigation.navigate('UserListScreen')}
+            style={({ pressed }) => ({
+              flex: 1,
+              padding: 12,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: theme.colors.separator,
+              backgroundColor: pressed ? theme.colors.accentSurface : theme.colors.surface,
+              gap: 8,
+            })}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{ width: 36, height: 36, borderRadius: 8, backgroundColor: theme.colors.accentSurface, alignItems: 'center', justifyContent: 'center' }}>
+                <Ionicons name="chatbubbles-outline" size={20} color={theme.colors.primary} accessible={false} />
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={theme.colors.muted} accessible={false} />
+            </View>
+            <View>
+              <AppText variant="label" style={{ fontSize: 14 }}>Crew Messages</AppText>
+              <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 11 }}>
+                Radio & crew direct messaging
+              </AppText>
+            </View>
+          </Pressable>
+        </View>
       </View>
     </FormScreen>
   );
