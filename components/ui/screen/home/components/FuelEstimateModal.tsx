@@ -7,7 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { estimateFuelLitres, parseFuelRate } from '@/utils/routeEstimate';
 
 type FuelEstimateModalProps = {
@@ -45,7 +45,7 @@ export default function FuelEstimateModal({
           <View style={styles.modalHeader}>
             <View style={styles.headerLeft}>
               <View style={styles.iconCircle}>
-                <FontAwesome name="tint" size={20} color="#0284C7" />
+                <MaterialCommunityIcons name="gas-station" size={20} color="#EA580C" />
               </View>
               <Text style={styles.modalTitle}>Fuel Estimate</Text>
             </View>
@@ -98,7 +98,7 @@ export default function FuelEstimateModal({
           <View style={styles.resultBox}>
             <Text style={styles.resultHeader}>ESTIMATED FUEL CONSUMPTION</Text>
             <View style={styles.fuelRow}>
-              <FontAwesome name="tint" size={26} color="#0284C7" />
+              <MaterialCommunityIcons name="gas-station" size={26} color="#EA580C" />
               <Text style={styles.fuelText} accessibilityLiveRegion="polite">
                 {fuelNeeded === null
                   ? 'Fuel estimate unavailable'
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 8,
-    backgroundColor: '#E0F2FE',
+    backgroundColor: '#FFEDD5',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -259,17 +259,17 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   resultBox: {
-    backgroundColor: '#E0F2FE',
+    backgroundColor: '#FFF7ED',
     borderRadius: 14,
     padding: 14,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#BAE6FD',
+    borderColor: '#FED7AA',
   },
   resultHeader: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#0369A1',
+    color: '#C2410C',
     letterSpacing: 0.5,
     marginBottom: 6,
   },
@@ -282,11 +282,11 @@ const styles = StyleSheet.create({
   fuelText: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#075985',
+    color: '#9A3412',
   },
   resultSub: {
     fontSize: 11,
-    color: '#0369A1',
+    color: '#EA580C',
     marginTop: 4,
   },
   noteText: {
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   okBtn: {
-    backgroundColor: '#075985',
+    backgroundColor: '#EA580C',
     paddingVertical: 12,
     borderRadius: 12,
     alignItems: 'center',
