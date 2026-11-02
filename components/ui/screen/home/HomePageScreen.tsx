@@ -5,6 +5,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
 import AppText from '@/components/ui/AppText';
 import FormScreen from '@/components/ui/FormScreen';
+import api from '@/utils/api';
 import { logFailure } from '@/utils/logging';
 import { formatUtc, formatValue, type WeatherConditions, type MarineConditions } from '@/utils/conditions';
 
@@ -15,7 +16,7 @@ type Props = {
 };
 
 export default function HomePageScreen({ navigation }: Props) {
-  const [username, setUsername] = useState('Crew member');
+  const [displayName, setDisplayName] = useState('Crew member');
   const [weather, setWeather] = useState<WeatherConditions | null>(null);
   const [marine, setMarine] = useState<MarineConditions | null>(null);
   const { width } = useWindowDimensions();
@@ -23,11 +24,23 @@ export default function HomePageScreen({ navigation }: Props) {
 
   useEffect(() => {
     let active = true;
-    AsyncStorage.getItem('username')
-      .then(name => {
-        if (active && name) setUsername(name);
+    AsyncStorage.getItem('firstName')
+      .then(firstName => {
+        if (active && firstName?.trim()) setDisplayName(firstName.trim());
       })
-      .catch(error => logFailure('home.username', error));
+      .catch(error => logFailure('home.display_name', error));
+
+    api.get('users/profile')
+      .then(async response => {
+        const firstName = response.data?.data?.user?.firstName;
+        if (typeof firstName !== 'string' || !firstName.trim()) {
+          throw new Error('Profile response did not include a first name');
+        }
+        const name = firstName.trim();
+        await AsyncStorage.setItem('firstName', name);
+        if (active) setDisplayName(name);
+      })
+      .catch(error => logFailure('home.profile_name', error));
 
     AsyncStorage.getItem('cached_weather')
       .then(raw => {
@@ -94,7 +107,7 @@ export default function HomePageScreen({ navigation }: Props) {
 
         <View>
           <AppText variant="title" accessibilityRole="header" style={{ fontSize: 26, fontWeight: '800', color: '#0F172A' }}>
-            Hello, {username}!
+            Hello, {displayName}!
           </AppText>
           <AppText variant="caption" style={{ color: '#475569', fontSize: 13, fontWeight: '500' }}>
             Tap color cards below for conditions, tools & emergency
