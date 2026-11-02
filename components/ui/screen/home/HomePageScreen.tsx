@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Image, Pressable, View, useWindowDimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
 import AppText from '@/components/ui/AppText';
 import FormScreen from '@/components/ui/FormScreen';
@@ -279,7 +279,7 @@ export default function HomePageScreen({ navigation }: Props) {
             })}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: '#16A34A', alignItems: 'center', justifyContent: 'center' }}>
-                <Ionicons name="water" size={20} color="#FFFFFF" accessible={false} />
+                <MaterialCommunityIcons name="waves" size={22} color="#FFFFFF" accessible={false} />
               </View>
               <View style={{
                 backgroundColor: isWaveRough ? '#FEE2E2' : isWaveModerate ? '#FEF08A' : '#DCFCE7',

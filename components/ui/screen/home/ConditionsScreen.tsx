@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
 import AppText from '@/components/ui/AppText';
 import Card from '@/components/ui/Card';
@@ -230,8 +230,8 @@ export default function ConditionsScreen({ route }: Props) {
               shadowRadius: 4,
               elevation: activeTab === 'sea' ? 3 : 0,
             }}>
-            <Ionicons
-              name={activeTab === 'sea' ? 'water' : 'water-outline'}
+            <MaterialCommunityIcons
+              name="waves"
               size={20}
               color={activeTab === 'sea' ? '#FFFFFF' : '#64748B'}
               accessible={false}
@@ -557,7 +557,7 @@ export default function ConditionsScreen({ route }: Props) {
                     </AppText>
                   </View>
                   <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: 'rgba(255, 255, 255, 0.2)', alignItems: 'center', justifyContent: 'center' }}>
-                    <Ionicons name="water" size={36} color="#FFFFFF" accessible={false} />
+                    <MaterialCommunityIcons name="waves" size={36} color="#FFFFFF" accessible={false} />
                   </View>
                 </View>
 
@@ -637,7 +637,7 @@ export default function ConditionsScreen({ route }: Props) {
                       <AppText variant="caption" style={{ color: theme.colors.muted, fontSize: 11, fontWeight: '600' }}>
                         {hour.time ? hour.time.slice(11, 16) : '--:--'}
                       </AppText>
-                      <Ionicons name="water" size={18} color={theme.colors.primary} accessible={false} />
+                      <MaterialCommunityIcons name="waves" size={18} color="#059669" accessible={false} />
                       <AppText variant="label" style={{ fontSize: 13 }}>
                         {hour.waveHeightM !== null ? `${hour.waveHeightM.toFixed(1)}m` : '--'}
                       </AppText>
