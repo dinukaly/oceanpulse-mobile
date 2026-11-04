@@ -18,7 +18,6 @@ import { RootState } from "@/store";
 import useMessages from "@/utils/useMessages";
 import useMessagingActive from "@/utils/useMessagingActive";
 import { Message, messageKey } from "@/utils/messaging";
-import useKeyboardHeight from "@/hooks/useKeyboardHeight";
 
 type ChatScreenParams = { otherUserId: string; otherUserName?: string };
 
@@ -34,16 +33,8 @@ export default function ChatScreen({
   const active = useMessagingActive();
   const chat = useMessages(myId, otherUserId, active);
   const [input, setInput] = useState("");
-  const keyboardHeight = useKeyboardHeight();
   const flatListRef = useRef<FlatList<Message>>(null);
 
-  useEffect(() => {
-    if (keyboardHeight > 0) {
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 50);
-    }
-  }, [keyboardHeight]);
   const scrollForNewMessages = useRef(true);
   const latestChat = useRef(chat);
   latestChat.current = chat;
@@ -194,10 +185,7 @@ export default function ChatScreen({
 
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={[
-          styles.container,
-          Platform.OS === "android" && keyboardHeight > 0 && { paddingBottom: keyboardHeight },
-        ]}
+        style={styles.container}
         keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
         {chat.loading && chat.messages.length === 0 ? (
@@ -207,6 +195,9 @@ export default function ChatScreen({
           </View>
         ) : (
           <FlatList
+            style={{ flex: 1 }}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
             ref={flatListRef}
             data={chat.messages}
             keyExtractor={messageKey}

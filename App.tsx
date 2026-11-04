@@ -18,6 +18,7 @@ import { apiConfigurationMessage } from '@/utils/apiConfiguration';
 function App() {
   const [isLoading, setLoading] = useState(true);
   const [restoreError, setRestoreError] = useState(false);
+  const [splashElapsed, setSplashElapsed] = useState(false);
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
   const dispatch = useDispatch();
 
@@ -47,7 +48,13 @@ function App() {
 
   useEffect(() => { checkAuthStatus(); }, []);
 
-  if (isLoading) {
+  useEffect(() => {
+    // Concurrent with session restoration; never adds a delay after a slow request.
+    const timer = setTimeout(() => setSplashElapsed(true), 850);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading || !splashElapsed) {
     return (
       <View style={styles.container}>
         <SplashScreen />

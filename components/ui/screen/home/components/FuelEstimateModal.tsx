@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { estimateFuelLitres, parseFuelRate } from '@/utils/routeEstimate';
-import useKeyboardHeight from '@/hooks/useKeyboardHeight';
 
 type FuelEstimateModalProps = {
   visible: boolean;
@@ -32,8 +32,6 @@ export default function FuelEstimateModal({
   const formatAmount = (value: number) =>
     value > 0 && value < 0.01 ? '<0.01' : value.toFixed(2);
 
-  const keyboardHeight = useKeyboardHeight();
-
   return (
     <Modal
       visible={visible}
@@ -43,12 +41,10 @@ export default function FuelEstimateModal({
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={[
-          styles.overlay,
-          Platform.OS === 'android' && keyboardHeight > 0 && { paddingBottom: keyboardHeight },
-        ]}
+        style={styles.overlay}
       >
-        <View style={styles.modalCard}>
+        <ScrollView style={styles.modalCard} contentContainerStyle={{ padding: 20 }}
+          keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
           {/* Modal Handle */}
           <View style={styles.dragHandle} />
 
@@ -136,7 +132,7 @@ export default function FuelEstimateModal({
               <Text style={styles.okBtnText}>Dismiss Estimate</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </Modal>
   );
@@ -155,7 +151,9 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 390,
     borderRadius: 20,
-    padding: 20,
+    maxHeight: '100%',
+    flexGrow: 0,
+    flexShrink: 1,
     shadowColor: '#0F172A',
     shadowOpacity: 0.15,
     shadowOffset: { width: 0, height: 8 },

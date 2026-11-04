@@ -20,7 +20,6 @@ import { logout } from '@/store/authSlice';
 import { Ionicons } from '@expo/vector-icons';
 import { clearSession } from '@/utils/session';
 import useProfile from '@/utils/useProfile';
-import useKeyboardHeight from '@/hooks/useKeyboardHeight';
 
 const getInitials = (firstName: string, lastName: string) => {
   const f = firstName ? firstName.charAt(0) : '';
@@ -33,7 +32,6 @@ const ProfileScreen: React.FC = () => {
   const profile = useProfile(userId, useIsFocused());
   const { user, loading } = profile;
   const dispatch = useDispatch();
-  const keyboardHeight = useKeyboardHeight();
 
   const handleLogout = async () => {
     try {
@@ -245,10 +243,7 @@ const ProfileScreen: React.FC = () => {
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={[
-            styles.modalOverlay,
-            Platform.OS === 'android' && keyboardHeight > 0 && { paddingBottom: keyboardHeight },
-          ]}
+          style={styles.modalOverlay}
         >
           <View style={styles.modalCard}>
             <View style={styles.modalHeader}>
@@ -283,7 +278,8 @@ const ProfileScreen: React.FC = () => {
               </View>
             )}
 
-            <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}>
+            <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
               <Text style={styles.inputLabel}>First Name</Text>
               <TextInput
                 style={styles.input}
@@ -842,6 +838,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   modalBody: {
+    flexShrink: 1,
     marginBottom: 14,
   },
   inputLabel: {
