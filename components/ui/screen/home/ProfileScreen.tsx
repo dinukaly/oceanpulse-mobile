@@ -11,6 +11,7 @@ import {
   Modal,
   SafeAreaView,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
@@ -19,6 +20,7 @@ import { logout } from '@/store/authSlice';
 import { Ionicons } from '@expo/vector-icons';
 import { clearSession } from '@/utils/session';
 import useProfile from '@/utils/useProfile';
+import useKeyboardHeight from '@/hooks/useKeyboardHeight';
 
 const getInitials = (firstName: string, lastName: string) => {
   const f = firstName ? firstName.charAt(0) : '';
@@ -31,6 +33,7 @@ const ProfileScreen: React.FC = () => {
   const profile = useProfile(userId, useIsFocused());
   const { user, loading } = profile;
   const dispatch = useDispatch();
+  const keyboardHeight = useKeyboardHeight();
 
   const handleLogout = async () => {
     try {
@@ -240,7 +243,13 @@ const ProfileScreen: React.FC = () => {
         visible={profile.editing}
         onRequestClose={profile.closeEditor}
       >
-        <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={[
+            styles.modalOverlay,
+            Platform.OS === 'android' && keyboardHeight > 0 && { paddingBottom: keyboardHeight },
+          ]}
+        >
           <View style={styles.modalCard}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Edit Profile</Text>
@@ -371,7 +380,7 @@ const ProfileScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );

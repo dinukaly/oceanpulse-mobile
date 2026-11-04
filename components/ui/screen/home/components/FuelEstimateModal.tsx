@@ -6,9 +6,12 @@ import {
   Modal,
   StyleSheet,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { estimateFuelLitres, parseFuelRate } from '@/utils/routeEstimate';
+import useKeyboardHeight from '@/hooks/useKeyboardHeight';
 
 type FuelEstimateModalProps = {
   visible: boolean;
@@ -29,6 +32,8 @@ export default function FuelEstimateModal({
   const formatAmount = (value: number) =>
     value > 0 && value < 0.01 ? '<0.01' : value.toFixed(2);
 
+  const keyboardHeight = useKeyboardHeight();
+
   return (
     <Modal
       visible={visible}
@@ -36,7 +41,13 @@ export default function FuelEstimateModal({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={[
+          styles.overlay,
+          Platform.OS === 'android' && keyboardHeight > 0 && { paddingBottom: keyboardHeight },
+        ]}
+      >
         <View style={styles.modalCard}>
           {/* Modal Handle */}
           <View style={styles.dragHandle} />
@@ -126,7 +137,7 @@ export default function FuelEstimateModal({
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
