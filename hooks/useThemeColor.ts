@@ -1,21 +1,11 @@
-/**
- * Learn more about light and dark modes:
- * https://docs.expo.dev/guides/color-schemes/
- */
-
-import { COLORS } from '@/constants/ColorPallet';
+import { palettes, type ColorToken } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
+/** Resolve a semantic color, preserving explicit platform-theme overrides. */
 export function useThemeColor(
   props: { light?: string; dark?: string },
-  colorName: keyof typeof COLORS.background & keyof typeof COLORS.darkGray
-) {
-  const theme = useColorScheme() ?? 'light';
-  const colorFromProps = props[theme];
-
-  if (colorFromProps) {
-    return colorFromProps;
-  } else {
-    //return COLORS[theme][colorName];
-  }
+  colorName: ColorToken,
+): string {
+  const mode = useColorScheme() ?? 'light';
+  return props[mode] ?? palettes[mode][colorName];
 }

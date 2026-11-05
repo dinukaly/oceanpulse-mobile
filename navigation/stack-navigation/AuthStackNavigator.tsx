@@ -11,7 +11,7 @@ import VerifyOtpScreen from '@/components/ui/screen/security/VerifyOtpScreen';
 const Stack = createStackNavigator<AuthStackParamList>();
 export default function StackNavigator() {
     return (
-        <Stack.Navigator initialRouteName="Welcome">
+        <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
             <Stack.Screen name={'Welcome'}
                 options={{ title: '', headerLeft: () => null, headerShown: false }}
                 component={WelcomePageScreen} />

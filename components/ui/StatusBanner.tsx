@@ -1,63 +1,28 @@
-import { StyleSheet, Text, View } from 'react-native';
-import type { StyleProp, ViewStyle } from 'react-native';
+import { View, type StyleProp, type ViewStyle } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/constants/theme';
+import AppText from './AppText';
 
 type Tone = 'info' | 'warning' | 'error' | 'success';
-type Props = {
-  tone: Tone;
-  title: string;
-  message: string;
-  style?: StyleProp<ViewStyle>;
-};
-
-const toneStyle = StyleSheet.create({
-  info: {
-    backgroundColor: theme.colors.infoSurface,
-    borderColor: theme.colors.accent,
-  },
-  warning: {
-    backgroundColor: theme.colors.warningSurface,
-    borderColor: theme.colors.warningBorder,
-  },
-  error: {
-    backgroundColor: theme.colors.errorSurface,
-    borderColor: theme.colors.danger,
-  },
-  success: {
-    backgroundColor: theme.colors.successSurface,
-    borderColor: theme.colors.success,
-  },
-});
-
-export default function StatusBanner({ tone, title, message, style }: Props) {
-  return (
-    <View
-      accessible
-      accessibilityLabel={`${title}. ${message}`}
-      accessibilityLiveRegion={tone === 'error' ? 'assertive' : 'polite'}
-      style={[styles.container, toneStyle[tone], style]}
-    >
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.message}>{message}</Text>
+const tones = {
+  info: { color: theme.colors.primary, surface: theme.colors.accentSurface, icon: 'information-circle-outline' },
+  warning: { color: theme.colors.warning, surface: theme.colors.warningSurface, icon: 'warning-outline' },
+  error: { color: theme.colors.danger, surface: theme.colors.dangerSurface, icon: 'alert-circle-outline' },
+  success: { color: theme.colors.success, surface: theme.colors.successSurface, icon: 'checkmark-circle-outline' },
+} as const;
+export default function StatusBanner({ tone, title, message, style }: {
+  tone: Tone; title: string; message: string; style?: StyleProp<ViewStyle>;
+}) {
+  const appearance = tones[tone];
+  return <View accessible accessibilityLabel={`${title}. ${message}`}
+    accessibilityLiveRegion={tone === 'error' ? 'assertive' : 'polite'}
+    style={[style, { width: '100%', borderWidth: 1, borderRadius: theme.radius.md,
+      padding: theme.spacing.md, backgroundColor: appearance.surface, borderColor: appearance.color,
+      flexDirection: 'row', gap: theme.spacing.sm }]}>
+    <Ionicons name={appearance.icon} size={24} color={appearance.color} accessible={false} />
+    <View style={{ flex: 1, gap: theme.spacing.xs }}>
+      <AppText variant="label" style={{ color: appearance.color }}>{title}</AppText>
+      <AppText style={{ color: appearance.color }}>{message}</AppText>
     </View>
-  );
+  </View>;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    borderWidth: 2,
-    borderRadius: theme.radius.md,
-    padding: theme.spacing.md,
-  },
-  title: {
-    color: theme.colors.text,
-    fontSize: theme.type.body,
-    fontWeight: '700',
-  },
-  message: {
-    color: theme.colors.text,
-    fontSize: theme.type.body,
-    marginTop: theme.spacing.sm,
-  },
-});

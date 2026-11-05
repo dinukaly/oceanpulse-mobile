@@ -109,7 +109,7 @@ const native = {
 const dependencies = {
   react: { ...React, default: React },
   'react-native': native,
-  '@expo/vector-icons': { FontAwesome: 'FontAwesome' },
+  '@expo/vector-icons': { FontAwesome: 'FontAwesome', MaterialCommunityIcons: 'MaterialCommunityIcons' },
   '@/utils/routeEstimate': route,
 };
 const modal = load(

@@ -9,7 +9,15 @@ export const getToken = async (): Promise<string | null> => {
   return SecureStore.getItemAsync(TOKEN_KEY);
 };
 
-export const saveSession = async (token: string, user: { userId: string; username: string }) => {
+export const saveSession = async (
+  token: string,
+  user: {
+    userId: string;
+    username: string;
+    firstName?: string;
+    lastName?: string;
+  },
+) => {
   if (Platform.OS === 'web') {
     await AsyncStorage.setItem(TOKEN_KEY, token);
   } else {
@@ -18,6 +26,8 @@ export const saveSession = async (token: string, user: { userId: string; usernam
   await AsyncStorage.multiSet([
     ['userId', String(user.userId)],
     ['username', user.username],
+    ['firstName', user.firstName ?? ''],
+    ['lastName', user.lastName ?? ''],
   ]);
   await AsyncStorage.removeItem('token'); // Remove the old plain-storage key.
 };
@@ -28,5 +38,14 @@ export const clearSession = async () => {
   } else {
     await SecureStore.deleteItemAsync(TOKEN_KEY);
   }
-  await AsyncStorage.multiRemove(['token', 'userId', 'username', 'user', 'tempToken', 'resetToken']);
+  await AsyncStorage.multiRemove([
+    'token',
+    'userId',
+    'username',
+    'firstName',
+    'lastName',
+    'user',
+    'tempToken',
+    'resetToken',
+  ]);
 };

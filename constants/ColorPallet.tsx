@@ -1,24 +1,25 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
+import { theme } from './theme';
 
+/** @deprecated Use semantic tokens from constants/theme instead. */
 export const COLORS = {
-  primary: "#FF1414",
-  secondary: "#00FF00",
-  tertiary: "#0000FF",
-  background: "#FFFFFF",
-  mainBackground: "#0456C7",
-  mainBackgroundtwo: "#F2F2F2",
-  primaryBlack: "#000000",
-  darkGray: "#333333",
-  lightGray: "#CCCCCC",
-  lighBlue: "#00BFFF",
-  lightGray2: "#F2F2F2",
-  gray: "#808080",
-  primaryTextColor:"#FFFFFF",
-  primaryGray:"#D9D9D9",
-  primaryTextBlueColor: "#0456C7"
+  primary: theme.colors.primary,
+  secondary: theme.colors.success,
+  tertiary: theme.colors.primary,
+  // Legacy background also serves as white foreground on colored surfaces.
+  // Preserve white until each consumer is migrated according to its role.
+  background: theme.colors.surface,
+  mainBackground: theme.colors.primary,
+  mainBackgroundtwo: theme.colors.background,
+  primaryBlack: theme.colors.text,
+  darkGray: theme.colors.text,
+  lightGray: theme.colors.border,
+  lighBlue: theme.colors.primary,
+  lightGray2: theme.colors.background,
+  gray: theme.colors.muted,
+  primaryTextColor: theme.colors.onPrimary,
+  primaryGray: theme.colors.separator,
+  primaryTextBlueColor: theme.colors.primary,
 } as const;
 
+/** @deprecated Use ColorToken from constants/theme. */
 export type ColorPallet = keyof typeof COLORS;
